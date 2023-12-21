@@ -41,12 +41,24 @@ TidyData$code <- activities$activity[TidyData$code]
 feature_labels <- features$functions
 feature_labels <- gsub("Acc", "Accelerometer", feature_labels)
 feature_labels <- gsub("Gyro", "Gyroscope", feature_labels)
-# ... (Continue with other label modifications)
+feature_labels <- gsub("BodyBody", "Body", feature_labels)
+feature_labels <- gsub("Mag", "Magnitude", feature_labels)
+feature_labels <- gsub("^t", "Time", feature_labels)
+feature_labels <- gsub("^f", "Frequency", feature_labels)
+feature_labels <- gsub("tBody", "TimeBody", feature_labels)
+feature_labels <- gsub("-mean()", "Mean", feature_labels, ignore.case = TRUE)
+feature_labels <- gsub("-std()", "STD", feature_labels, ignore.case = TRUE)
+feature_labels <- gsub("-freq()", "Frequency", feature_labels, ignore.case = TRUE)
+feature_labels <- gsub("angle", "Angle", feature_labels)
+feature_labels <- gsub("gravity", "Gravity", feature_labels)
+
+# Updating column names in TidyData
+colnames(TidyData)[3:ncol(TidyData)] <- feature_labels
 
 # Creating a second, independent tidy data set
 FinalData <- TidyData %>%
   group_by(subject, activity) %>%
-  mutate_all(mean)
+  summarise_all(mean)
 
 # Writing the final data
 write.table(FinalData, "FinalData.txt", row.name = FALSE)
